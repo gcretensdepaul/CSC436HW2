@@ -1,10 +1,11 @@
 
 import './App.css';
-import {useState} from 'react';
+import {useState, useReducer} from 'react';
 import UserBar from './user/UserBar';
 import TodoList from './todo/TodoList';
 import CreateTodo from './todo/CreateTodo';
 import { v4 as uuidv4 } from "uuid";
+import appReducer from './Reducers';
 
 function App() {
 
@@ -20,14 +21,26 @@ function App() {
       id: uuidv4()
     }
   ];
-  const [user, setUser] = useState('');
-  const [todos, setTodos] = useState(initialTodo);
+
+  // const [user, setUser] = useState('');
+  //const [todos, setTodos] = useState(initialTodo);
+
+
+
+  // const[user, dispatchUser] = useReducer(userReducer, "");
+  // const[todos, dispatchTodos] = useReducer(todoReducer, initialTodo)
+
+  const[state, dispatch] = useReducer(appReducer, {
+    user: "",
+    todos: initialTodo,
+  });
+
   
   return (
     <div>
-      <UserBar user={user} setUser={setUser}/>
-      <TodoList todos={todos} />
-      {user && <CreateTodo user={user} todos={todos} setTodos={setTodos} />} 
+      <UserBar user={state.user} dispatch={dispatch}/>
+      <TodoList todos={state.todos} />
+      {state.user && <CreateTodo user={state.user} todos={state.todos} dispatch={dispatch} />} 
     </div>
   );
 }

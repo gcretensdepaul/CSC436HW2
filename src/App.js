@@ -1,10 +1,13 @@
 
 import './App.css';
-import {useState, useReducer} from 'react';
+import {useState, useEffect, useReducer} from 'react';
 import UserBar from './user/UserBar';
 import TodoList from './todo/TodoList';
 import CreateTodo from './todo/CreateTodo';
 import { v4 as uuidv4 } from "uuid";
+import Header from "./Header";
+import {ThemeContext, StateContext }from "./contexts";
+import ChangeTheme from "./ChangeTheme";
 import appReducer from './Reducers';
 
 function App() {
@@ -22,25 +25,37 @@ function App() {
     }
   ];
 
-  // const [user, setUser] = useState('');
-  //const [todos, setTodos] = useState(initialTodo);
-
-
-
-  // const[user, dispatchUser] = useReducer(userReducer, "");
-  // const[todos, dispatchTodos] = useReducer(todoReducer, initialTodo)
-
   const[state, dispatch] = useReducer(appReducer, {
     user: "",
     todos: initialTodo,
   });
 
+  useEffect(() => {
+    if (state.user) {
+      document.title = `${state.user}'s ToDo List`;
+    }
+    else {
+      document.title = "A ToDo List App";
+    }
+  }, [state.user]);
+
+  const[theme, setTheme] = useState({
+    primaryColor : "deepskyblue", 
+    secondaryColor: "coral"
+  });
   
   return (
     <div>
-      <UserBar user={state.user} dispatch={dispatch}/>
-      <TodoList todos={state.todos} />
-      {state.user && <CreateTodo user={state.user} todos={state.todos} dispatch={dispatch} />} 
+      <StateContext.Provider value={{state, dispatch}}>
+        <ThemeContext.Provider value={theme}>
+          <Header title="ToDo List App"></Header>
+          <ChangeTheme theme={theme} setTheme={setTheme} /> 
+          <UserBar />
+          
+          <TodoList />
+          {state.user && <CreateTodo user={state.user} todos={state.todos} dispatch={dispatch} />} 
+        </ThemeContext.Provider>
+      </StateContext.Provider>
     </div>
   );
 }

@@ -1,8 +1,10 @@
-import {useState} from 'react';
+import {useState, useContext} from 'react';
+import {ThemeContext} from '../contexts';
 
 export default function Todo ({ title, description, author, dateCreated }) {
     const [complete, setComplete] = useState(false);
     const [dateCompleted, setDateCompleted] = useState("");
+    const{secondaryColor} = useContext(ThemeContext);
 
     //Event handler triggered when the completed checkbox is clicked.
     //Sets the dateCompleted if the box is checked, otherwise clears the field if unchecked.
@@ -19,7 +21,7 @@ export default function Todo ({ title, description, author, dateCreated }) {
 
     return (
          <div>
-            <h3>Todo: {title}</h3>
+            <h3 style={{color: secondaryColor}}>Todo: {title}</h3>
             <div>Desc: {description}</div>
             <div><i>By: <b>{author}</b></i></div>
             <div>Created: {dateCreated}</div>

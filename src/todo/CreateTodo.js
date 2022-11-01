@@ -7,27 +7,29 @@
 // complete
 // dateCompleted
 
-import{useState} from 'react'; 
+import{useState, useContext} from 'react'; 
+import {StateContext} from "../contexts";
 import { v4 as uuidv4 } from "uuid";
 
-export default function CreateTodo ({user, todos, dispatch}) {
+export default function CreateTodo () {
     const [ title, setTitle ] = useState('');
     const [ description, setDescription ] = useState('');
+    const {state, dispatch} = useContext(StateContext);
+    const {user} = state;
 
     return (
          <form onSubmit={e => {
             e.preventDefault();
-            dispatch({type: "CREATE_TODO", title, description, author: user, dateCreated: Date(Date.now()).toString(), complete: false, dateCompleted: "", id: uuidv4()});
-            //  const newTodo = {
-            //     title, 
-            //     description, 
-            //     author: user,
-            //     dateCreated: Date(Date.now()).toString(),
-            //     complete: false,
-            //     dateCompleted: "",
-            //     id: uuidv4(),
-            //  };
-            //  setTodos([...todos, newTodo]);
+            dispatch({
+                type: "CREATE_TODO", 
+                title, 
+                description, 
+                author: user, 
+                dateCreated: Date(Date.now()).toString(), 
+                complete: false, 
+                dateCompleted: "", 
+                id: uuidv4()
+                });
             }}>
             <div>Author: <b>{user}</b></div>
             <div>

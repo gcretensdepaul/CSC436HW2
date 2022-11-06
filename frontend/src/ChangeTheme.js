@@ -1,20 +1,39 @@
-import React from "react";
+import React, {useEffect} from "react";
 import ThemeItem from "./ThemeItem";
+import { useResource } from 'react-request-hook';
+
+
 
 const THEMES = [
     {primaryColor : "deepskyblue", secondaryColor : "coral"},
     {primaryColor : "orchid", secondaryColor : "mediumseagreen"},
 ]
 
+
+
+
 export default function ChangeTheme({theme, setTheme}){
+    const [ themes, getThemes ] = useResource(() => ({
+        url: '/themes',
+        method: 'get'
+    }));
+
+    useEffect(getThemes, []);
+
+    const { data, isLoading } = themes;
+
+
+
     function isActive(t) {
         return t.primaryColor === theme.primaryColor && 
         t.secondaryColor === theme.secondaryColor
     };
     return (
         <div>
+            {isLoading && ' Loading themes...' };
             Change theme:
-            {THEMES.map((t, i) => (
+            {data &&
+                data.map((t, i) => (
                 <ThemeItem 
                     key={"theme-" + i} 
                     theme={t}

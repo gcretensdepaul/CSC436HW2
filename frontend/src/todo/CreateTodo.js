@@ -10,16 +10,36 @@
 import{useState, useContext} from 'react'; 
 import {StateContext} from "../contexts";
 import { v4 as uuidv4 } from "uuid";
+import { useResource } from 'react-request-hook';
+
 
 export default function CreateTodo () {
     const [ title, setTitle ] = useState('');
     const [ description, setDescription ] = useState('');
     const {state, dispatch} = useContext(StateContext);
     const {user} = state;
+    const [ todo, createTodo ] = useResource(({title, description, author, dateCreated, complete, dateCompleted, id}) => ({
+        url: '/todos',
+        method: 'post',
+        data: {title, description, author, dateCreated, complete, dateCompleted, id}
+    }));
+    
+
+
 
     return (
          <form onSubmit={e => {
             e.preventDefault();
+            let new_id = uuidv4();
+            createTodo({
+                title, 
+                description, 
+                author: user, 
+                dateCreated: Date(Date.now()).toString(), 
+                complete: false, 
+                dateCompleted: "", 
+                id: new_id
+            });
             dispatch({
                 type: "CREATE_TODO", 
                 title, 
@@ -28,9 +48,10 @@ export default function CreateTodo () {
                 dateCreated: Date(Date.now()).toString(), 
                 complete: false, 
                 dateCompleted: "", 
-                id: uuidv4()
-                });
+                id: new_id
+            });
             }}>
+            <h3>Create a New ToDo</h3>
             <div>Author: <b>{user}</b></div>
             <div>
                 <label htmlFor="create-title">Title:</label>

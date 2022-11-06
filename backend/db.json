@@ -1,0 +1,42 @@
+{
+  "todos": [
+    {
+      "title": "Chapter 1",
+      "description": "Gotcha",
+      "author": "test2@test.net",
+      "dateCreated": "Sun Nov 06 2022 16:32:50 GMT-0600 (Central Standard Time)",
+      "complete": false,
+      "dateCompleted": "",
+      "id": "c5f36af0-0027-4c88-8e14-92e854f3c70b"
+    }
+  ],
+  "users": [
+    {
+      "email": "glen@test.com",
+      "password": "$2a$10$BWl0s6dYKChZ4HIurwtwve1gNbVJPa.viDTUyaMh6Lcrnpbqm7hey",
+      "id": 1
+    },
+    {
+      "email": "test@test.net",
+      "password": "$2a$10$W1O0MiC7sUu0tZwDsvb35em//lCyDnEwK7AH9tX8fykaSAtgSaphq",
+      "id": 2
+    },
+    {
+      "email": "test2@test.net",
+      "password": "$2a$10$6hcwFtFXvq0nsk7YIVHsBeTJb8dVNrrDoMVr0yPkrXZegZsP5U2PG",
+      "id": 3
+    }
+  ],
+  "themes": [
+    {
+      "id": 1,
+      "primaryColor": "deepskyblue",
+      "secondaryColor": "coral"
+    },
+    {
+      "id": 2,
+      "primaryColor": "orchid",
+      "secondaryColor": "mediumseagreen"
+    }
+  ]
+}

@@ -9,25 +9,26 @@ import Header from "./Header";
 import {ThemeContext, StateContext }from "./contexts";
 import ChangeTheme from "./ChangeTheme";
 import appReducer from './Reducers';
+import { useResource } from 'react-request-hook';
 
 function App() {
 
   //Initial Todo upon app load.  Could be blank, and set the const[todos, ...] to an empty string.  For illustrative purposes.
-  const initialTodo = [
-    {
-      title: "My First Task",
-      description: "My first task is to create another task! This one doesn't count :)",
-      author: "Default",
-      dateCreated: Date(Date.now()).toString(),
-      complete: false,
-      dateCompleted:"",
-      id: uuidv4()
-    }
-  ];
+  // const initialTodo = [
+  //   {
+  //     title: "My First Task",
+  //     description: "My first task is to create another task! This one doesn't count :)",
+  //     author: "Default",
+  //     dateCreated: Date(Date.now()).toString(),
+  //     complete: false,
+  //     dateCompleted:"",
+  //     id: uuidv4()
+  //   }
+  // ];
 
   const[state, dispatch] = useReducer(appReducer, {
     user: "",
-    todos: initialTodo,
+    todos: [],
   });
 
   useEffect(() => {
@@ -43,7 +44,33 @@ function App() {
     primaryColor : "deepskyblue", 
     secondaryColor: "coral"
   });
-  
+
+  // useEffect(() => {
+  //   fetch("/api/themes")
+  //   .then((result) => result.json())
+  //   .then((themes) => setTheme(themes));
+  // }, []);
+
+  // useEffect(() => {
+  //   fetch("/api/todos")
+  //   .then((result) => result.json())
+  //   .then((todos) => dispatch({ type: "FETCH_TODOS", todos}));
+  // }, []);
+
+  const [ todos, getTodos ] = useResource(() => ({
+    url: '/todos',
+    method: 'get'
+  }));
+
+  useEffect(getTodos, [])
+
+  useEffect(() => {
+    if (todos && todos.data) {
+      dispatch({ type: 'FETCH_TODOS', todos: todos.data })
+    }
+  }, [todos])
+
+
   return (
     <div>
       <StateContext.Provider value={{state, dispatch}}>
@@ -51,7 +78,6 @@ function App() {
           <Header title="ToDo List App"></Header>
           <ChangeTheme theme={theme} setTheme={setTheme} /> 
           <UserBar />
-          
           <TodoList />
           {state.user && <CreateTodo user={state.user} todos={state.todos} dispatch={dispatch} />} 
         </ThemeContext.Provider>

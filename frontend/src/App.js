@@ -1,6 +1,6 @@
 
 import './App.css';
-import {useState, useEffect, useReducer} from 'react';
+import React, {useState, useEffect, useReducer} from 'react';
 import UserBar from './user/UserBar';
 import TodoList from './todo/TodoList';
 import CreateTodo from './todo/CreateTodo';
@@ -33,7 +33,7 @@ function App() {
 
   useEffect(() => {
     if (state.user) {
-      document.title = `${state.user}'s ToDo List`;
+      document.title = `${state.user.username}'s ToDo List`;
     }
     else {
       document.title = "A ToDo List App";
@@ -57,19 +57,38 @@ function App() {
   //   .then((todos) => dispatch({ type: "FETCH_TODOS", todos}));
   // }, []);
 
-  const [ todos, getTodos ] = useResource(() => ({
-    url: '/todos',
-    method: 'get'
+  // const [ todos, getTodos ] = useResource(() => ({
+  //   url: '/todos',
+  //   method: 'get'
+  // }));
+
+  const [todos, getTodos] = useResource(() => ({
+    url: "/post",
+    method: "get",
+    headers: { Authorization: `${state?.user?.access_token}` },
   }));
+    
 
-  useEffect(getTodos, [])
-
+  //useEffect(getTodos, [])
   useEffect(() => {
-    if (todos && todos.data) {
-      dispatch({ type: 'FETCH_TODOS', todos: todos.data })
+    if(state?.user?.access_token){
+      getTodos();
     }
-  }, [todos])
+    
+  }, [state?.user?.access_token]);
+  
 
+  // useEffect(() => {
+  //   if (todos && todos.data) {
+  //     dispatch({ type: 'FETCH_TODOS', todos: todos.data })
+  //   }
+  // }, [todos])
+  useEffect(() => {
+    if (todos && todos.isLoading === false && todos.data) {
+      dispatch({ type: "FETCH_TODOS", todos: todos.data.todos.reverse() });
+    }
+    }, [todos]);
+    
 
   return (
     <div>
@@ -77,7 +96,9 @@ function App() {
         <ThemeContext.Provider value={theme}>
           <Header title="ToDo List App"></Header>
           <ChangeTheme theme={theme} setTheme={setTheme} /> 
-          <UserBar />
+          <React.Suspense fallback = {"Loading..."}>
+            <UserBar />
+          </React.Suspense>
           <TodoList />
           {state.user && <CreateTodo user={state.user} todos={state.todos} dispatch={dispatch} />} 
         </ThemeContext.Provider>

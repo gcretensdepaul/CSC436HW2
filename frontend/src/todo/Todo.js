@@ -1,9 +1,10 @@
+import React from 'react';
 import {useState, useContext} from 'react';
 import {ThemeContext, StateContext} from '../contexts';
 import { useResource } from 'react-request-hook';
 
 
-export default function Todo ({ title, description, author, dateCreated, complete, dateCompleted, id }) {
+function Todo ({ title, description, author, dateCreated, complete, dateCompleted, _id }) {
     //const [complete, setComplete] = useState(false);
     //const [dateCompleted, setDateCompleted] = useState("");
     const{secondaryColor} = useContext(ThemeContext);
@@ -12,15 +13,29 @@ export default function Todo ({ title, description, author, dateCreated, complet
     const {state, dispatch} = useContext(StateContext);
     // const [complete, setComplete] = useState(complete);
     // const [dateCompleted, setDateCompleted] = useState(state);
-    const [todo, patchTodo ] = useResource(({id, complete, dateCompleted}) => ({
-        url: `/todos/${id}`,
+    
+    // const [todo, patchTodo ] = useResource(({id, complete, dateCompleted}) => ({
+    //     url: `/todos/${id}`,
+    //     method: 'patch',
+    //     data: {complete, dateCompleted}
+    //   }));
+
+    const [todo, patchTodo ] = useResource(({_id, complete, dateCompleted}) => ({
+        url: `/post/patch/${_id}`,
         method: 'patch',
+        headers: {"Authorization": `${state.user.access_token}`},
         data: {complete, dateCompleted}
       }));
-    const [todoo, deleteTodo] = useResource((id) => ({
-    url: `/todos/${id}`,
-    method: 'delete',
 
+    // const [todoo, deleteTodo] = useResource((id) => ({
+    // url: `/todos/${id}`,
+    // method: 'delete',
+    // }));
+
+    const [todoo, deleteTodo] = useResource((_id) => ({
+        url: `/post/delete/${_id}`,
+        method: "delete",
+        headers: {"Authorization": `${state.user.access_token}`},
     }));
 
 
@@ -39,10 +54,10 @@ export default function Todo ({ title, description, author, dateCreated, complet
         }
         complete = !complete;
         //setComplete(!complete);
-        patchTodo({id, complete, dateCompleted});
+        patchTodo({_id, complete, dateCompleted});
         dispatch({
             type: "TOGGLE_TODO",  
-            id: id,
+            id: _id,
             complete: complete,
             dateCompleted: dateCompleted
         });
@@ -57,13 +72,13 @@ export default function Todo ({ title, description, author, dateCreated, complet
             <div>Created: {dateCreated}</div>
             <div>Completed: <input type="checkbox" id="complete-checkbox" onChange={handleCheckbox} checked={complete}></input>{complete} ({complete ? "Yes"  : "No"})</div>
             <div>Date Completed: {dateCompleted}</div>     
-            <div>id: {id}</div>      
-                <button key={"button"+id } onClick={e => {
+            <div>id: {_id}</div>      
+                <button key={"button"+_id } onClick={e => {
                 e.preventDefault();
-                deleteTodo(id);
+                deleteTodo(_id);
                 dispatch({
                     type: "DELETE_TODO",  
-                    id: id
+                    id: _id
                 });
                 }}>
                 Delete
@@ -73,5 +88,7 @@ export default function Todo ({ title, description, author, dateCreated, complet
             <br />
         </div>
 
-    )
+    );
 }
+
+export default React.memo(Todo); 

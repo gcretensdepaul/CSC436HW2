@@ -30,7 +30,7 @@ export default function ChangeTheme({theme, setTheme}){
     };
     return (
         <div>
-            {isLoading && ' Loading themes...' };
+            {isLoading && ' Loading themes...' }
             Change theme:
             {data &&
                 data.map((t, i) => (

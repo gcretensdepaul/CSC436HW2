@@ -1,10 +1,17 @@
 function userReducer(state, action) {
     switch(action.type) {
         case "LOGIN":
+            return {
+                username: action.username,
+                access_token: action.access_token,
+            };                
         case "REGISTER":
-            return action.username;
+            return {
+                username: action.username,
+                access_token: action.access_token,
+            };    
         case "LOGOUT":
-            return "";
+            return null;  
         default:
             return state;
     }
@@ -20,18 +27,21 @@ function todoReducer(state, action) {
                 dateCreated: action.dateCreated,
                 complete: action.complete,
                 dateCompleted: action.dateCompleted,
-                id: action.id,
+                _id: action.id,
             };
             return[...state, newTodo];
         case "FETCH_TODOS":
             return action.todos;
         case "DELETE_TODO":
-            return state.filter(x => { return x.id !== action.id;})
+            return state.filter(x => { return x._id !== action.id;})
         case "TOGGLE_TODO":
-            var objIndex = state.findIndex((obj => obj.id === action.id));
+            var objIndex = state.findIndex((obj => obj._id === action.id));
             state[objIndex].complete = action.complete;
             state[objIndex].dateCompleted = action.dateCompleted;
             return state
+        case "CLEAR_TODOS":
+            return [];
+            
         default:
             return state
     }
